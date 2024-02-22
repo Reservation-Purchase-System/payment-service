@@ -26,8 +26,10 @@ public class PaymentLogging {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "payment_id", updatable = false)
   private Long id;
+
+  @Column(name = "payment_id", updatable = false)
+  private Long paymentId;
 
   @Column(name = "purchase_id", nullable = false)
   private Long purchaseId;
@@ -44,6 +46,7 @@ public class PaymentLogging {
   private LocalDateTime timestamp;
 
   public PaymentLogging(Payment payment, PaymentAction action) {
+    this.paymentId = payment.getId();
     this.purchaseId = payment.getPurchaseId();
     this.userId = payment.getUserId();
     this.action = action;
