@@ -5,8 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.nayoon.payment_service.client.PurchaseClient;
-import com.nayoon.payment_service.client.StockClient;
-import com.nayoon.payment_service.client.dto.PurchaseQuantityResponseDto;
 import com.nayoon.payment_service.entity.Payment;
 import com.nayoon.payment_service.repository.PaymentLoggingRepository;
 import com.nayoon.payment_service.repository.PaymentRepository;
@@ -32,9 +30,6 @@ class PaymentServiceTest {
 
   @Mock
   private PurchaseClient purchaseClient;
-
-  @Mock
-  private StockClient stockClient;
 
   @Nested
   @DisplayName("주문 API")
@@ -72,9 +67,6 @@ class PaymentServiceTest {
       when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> {
         return payment;
       });
-      when(purchaseClient.findProductIdByPurchaseId(purchaseId)).thenAnswer(invocation -> {
-        return mockPurchaseQuantityResponseDto(purchaseId);
-      });
 
       //when
       String result = paymentService.create(userId, purchaseId, probability);
@@ -83,14 +75,6 @@ class PaymentServiceTest {
       assertEquals("fail", result);
     }
 
-  }
-
-  private PurchaseQuantityResponseDto mockPurchaseQuantityResponseDto(Long purchaseId) {
-    return PurchaseQuantityResponseDto.builder()
-        .productId(1L)
-        .quantity(10)
-        .productType("product")
-        .build();
   }
 
   private Payment mockPayment(Long userId, Long purchaseId) {

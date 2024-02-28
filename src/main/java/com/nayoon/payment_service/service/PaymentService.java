@@ -1,8 +1,6 @@
 package com.nayoon.payment_service.service;
 
 import com.nayoon.payment_service.client.PurchaseClient;
-import com.nayoon.payment_service.client.StockClient;
-import com.nayoon.payment_service.client.dto.PurchaseQuantityResponseDto;
 import com.nayoon.payment_service.entity.Payment;
 import com.nayoon.payment_service.entity.PaymentLogging;
 import com.nayoon.payment_service.repository.PaymentLoggingRepository;
@@ -21,7 +19,6 @@ public class PaymentService {
   private final PaymentRepository paymentRepository;
   private final PaymentLoggingRepository paymentLoggingRepository;
   private final PurchaseClient purchaseClient;
-  private final StockClient stockClient;
 
   /**
    * 결제 시작
@@ -49,14 +46,8 @@ public class PaymentService {
   }
 
   private String handleFailure(Long purchaseId, Payment payment) {
-    // 1. purchase_service에 주문 삭제 요청
+    // purchase_service에 주문 삭제 요청
     purchaseClient.delete(purchaseId);
-
-    // 2. purchaseId로 상품 ID 및 주문 수량 반환
-    PurchaseQuantityResponseDto quantityDto = purchaseClient.findProductIdByPurchaseId(purchaseId);
-
-    // 3. product_service에 재고 변경 요청
-    stockClient.increaseProductStock(quantityDto.productId(), quantityDto.quantity());
 
     // deletedAt에 값 넣어서 결제 취소 처리
     payment.cancel();
